@@ -13,7 +13,6 @@ import (
 
 func main() {
 	// 1. Запуск браузера
-	// Launch() запускает браузер, Headless(false) позволяет видеть, что происходит.
 	l := launcher.New().Headless(false).Devtools(false).Leakless(false)
 	url, err := l.Launch()
 	if err != nil {
@@ -36,23 +35,56 @@ func main() {
 	fmt.Println("Начинаем работу...")
 
 	// 2. Авторизация
-	// Используем MustElement для поиска по селекторам
 	page.MustElement("input[type=\"email\"]").MustWaitVisible().MustInput(login)
-	//fmt.Println("Login succses")
+	fmt.Println("Login succses")
 	page.MustElement("input[type=\"password\"]").MustWaitVisible().MustInput(password)
-	//fmt.Println("Password succses")
-	page.MustElement("button[type=\"submit\"]").MustClick() //Нажатие по кнопке
+	fmt.Println("Password succses")
+	page.MustElement("button[type=\"submit\"]").MustClick()
 
 	// Ждем загрузки личного кабинета
 	page.MustWaitLoad()
 	fmt.Println("Успешный вход!")
-	time.Sleep(100 * time.Second) //test
+	time.Sleep(100 * time.Second)
 
 }
+func processLesson(page *rod.Page) {
+	var lessonName string
+	fmt.Print("Введите назвение урока: ")
+	fmt.Scanln(&lessonName)
+	fmt.Println("Ищу урок на странице...")
+	page.MustElement("input[placeholder=\"Courses search\"]").MustWaitVisible().MustInput(lessonName)
+	page.MustElement("div[class=\"h-full flex\"]").MustWaitVisible().MustClick()
+	fmt.Print("Урок найден успешно!")
 
-// Заглушка для ИИ (сюда нужно вставить вызов OpenAI/Gemini)
-func getAIAnswer(question string) string {
-	fmt.Printf("Запрос к ИИ по вопросу: %s\n", question)
-	// В реальности здесь будет HTTP запрос к API
-	return "Вариант 2"
+	//UNDER THE DEVELOPMENT
+	// Ждем появления видеоплеера
+	video := page.MustElement("video")
+
+	// Запускаем видео, если оно не пошло само
+	video.MustClick()
+
+	// Используем JS, чтобы проверить окончание видео
+	for {
+		// Eval позволяет выполнить любой JS код прямо в консоли браузера через Go
+		isEnded := page.MustEval(`() => {
+			let v = document.querySelector('video');
+			return v ? v.ended : false;
+		}`).Bool()
+
+		if isEnded {
+			fmt.Println("✅ Видео досмотрено!")
+			break
+		}
+
+		fmt.Println("⏳ Видео еще идет... жду 10 секунд")
+		time.Sleep(10 * time.Second)
+	}
+
+	// 4. Логика теста (заглушка)
+	solveQuiz(page)
+}
+
+func solveQuiz(page *rod.Page) {
+	fmt.Println("📝 Перехожу к тесту...")
+	// Тут будет поиск текста вопроса и отправка в ИИ
 }
