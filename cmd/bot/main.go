@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
@@ -44,8 +43,8 @@ func main() {
 	// Ждем загрузки личного кабинета
 	page.MustWaitLoad()
 	fmt.Println("Успешный вход!")
-	time.Sleep(100 * time.Second)
-
+	//time.Sleep(100 * time.Second) //для замедление кода
+	processLesson(page) //переход на следующую стадию
 }
 func processLesson(page *rod.Page) {
 	var lessonName string
@@ -54,34 +53,41 @@ func processLesson(page *rod.Page) {
 	fmt.Println("Ищу урок на странице...")
 	page.MustElement("input[placeholder=\"Courses search\"]").MustWaitVisible().MustInput(lessonName)
 	page.MustElement("div[class=\"h-full flex\"]").MustWaitVisible().MustClick()
-	fmt.Print("Урок найден успешно!")
+	fmt.Println("Урок найден успешно!")
 
-	//UNDER THE DEVELOPMENT
-	// Ждем появления видеоплеера
-	video := page.MustElement("video")
-
-	// Запускаем видео, если оно не пошло само
-	video.MustClick()
-
-	// Используем JS, чтобы проверить окончание видео
-	for {
-		// Eval позволяет выполнить любой JS код прямо в консоли браузера через Go
-		isEnded := page.MustEval(`() => {
-			let v = document.querySelector('video');
-			return v ? v.ended : false;
-		}`).Bool()
-
-		if isEnded {
-			fmt.Println("✅ Видео досмотрено!")
-			break
+	var videoURLs []string
+	elements := page.MustActivate().MustElementsX("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div")
+	for i := range elements {
+		xpath := fmt.Sprintf("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div[%d]", i+1)
+		page.MustElementX(xpath).MustClick()
+		xpath_links := fmt.Sprintf("%s//a", xpath)
+		links := page.MustElementsX(xpath_links)
+		fmt.Printf("В категории %d найдено ссылок: [%d]\nx", i+1, len(links))
+		for _, url := range links {
+			attr := url.MustAttribute("href")
+			if attr != nil {
+				videoURLs = append(videoURLs, *attr)
+			}
 		}
+		fmt.Println("urls:", videoURLs)
+		for _, url := range videoURLs {
+			cur_cours := fmt.Sprintf("https://uni-x.almv.kz%s", url)
+			fmt.Printf("Перехожу на курс: %s\n", cur_cours)
+			page.MustNavigate(cur_cours)
+			page.MustWaitLoad()
+			fmt.Println("Успешно загрузил страницу!")
+			//time.Sleep(100 * time.Second) //для замедление кода
+			//UNDER THE DEVELOPMETN
+			//PLS CHECK VIDEO IS DONE
+			isDone, _, _ := .Has("img[src*='check']")
 
-		fmt.Println("⏳ Видео еще идет... жду 10 секунд")
-		time.Sleep(10 * time.Second)
+			if isDone {
+				fmt.Println("⏩ Урок уже отмечен как выполненный.")
+				continue
+			}
+		}
 	}
 
-	// 4. Логика теста (заглушка)
-	solveQuiz(page)
 }
 
 func solveQuiz(page *rod.Page) {
