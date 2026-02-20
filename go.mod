@@ -1,4 +1,4 @@
-module example.com/m
+module AutoUnix
 
 go 1.25.6
 
