@@ -7,7 +7,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/go-rod/rod"
 	"github.com/joho/godotenv"
 
 	"AutoUnix/internal/browser"
@@ -21,6 +20,7 @@ func main() {
 	}
 	login := os.Getenv("USER_EMAIL")
 	password := os.Getenv("USER_PASS")
+	code := os.Getenv("SRC")
 	if login == "" || password == "" { //Проверка, пустые ли данные
 		log.Fatal("Ошибка: переменные USER_EMAIL или USER_PASS не найдены в .env или пусты")
 	}
@@ -35,13 +35,15 @@ func main() {
 	//проверка доступен ли урок
 	first_url := page.MustActivate().MustElementX("//a[@class=\"flex flex-row items-center cursor-pointer\"][1]").MustAttribute("href")
 	id := path.Base(*first_url)
-	fmt.Printf("Текущий id урока: %s", id)
-	// 4. Начинаем смотреть видео
-	parser.GetAvailableLessons(page)
-	time.Sleep(100 * time.Second)
-}
+	fmt.Printf("Текущий id урока: %s\n", id)
+	// 4. Собираем url видео которые нужно посмотреть
+	urls := parser.GetAvailableLessons(page, code)
+	for _, url := range urls {
+		fmt.Printf("📖 Открываю: %s\n", url)
+		page.MustNavigate(url)
+		page.MustWaitLoad()
 
-func solveQuiz(page *rod.Page) {
-	fmt.Println("📝 Перехожу к тесту...")
-	// Тут будет поиск текста вопроса и отправка в ИИ
+		parser.Proceed_lesson(page)
+	}
+	time.Sleep(100 * time.Second)
 }
