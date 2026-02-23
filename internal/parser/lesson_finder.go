@@ -19,4 +19,5 @@ func FirstlLesson(page *rod.Page, lessonName string) {
 	page.MustActivate().MustElementX("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div[1]").MustClick()
 	first_url := page.MustActivate().MustElementX("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div[1]/div[3]/a[1]").MustAttribute("href")
 	page.MustNavigate("https://uni-x.almv.kz" + *first_url)
+	fmt.Printf("Перехожу по первой ссылке - %d\n", first_url)
 }
