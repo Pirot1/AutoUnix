@@ -8,7 +8,7 @@ import (
 )
 
 func Init(login string, password string) (*rod.Browser, *rod.Page) {
-	l := launcher.New().Headless(false).Devtools(false).Leakless(false)
+	l := launcher.New().Headless(false).Devtools(false).Leakless(false).Set("autoplay-policy", "no-user-gesture-required")
 	url, err := l.Launch()
 	if err != nil {
 		panic(fmt.Sprintf("Не удалось запустить браузер: %v", err))
