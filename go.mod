@@ -4,6 +4,7 @@ go 1.25.6
 
 require (
 	github.com/go-rod/rod v0.116.2
+	github.com/go-rod/stealth v0.4.9
 	github.com/joho/godotenv v1.5.1
 )
 
