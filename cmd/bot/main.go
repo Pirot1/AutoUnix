@@ -20,7 +20,6 @@ func main() {
 	}
 	login := os.Getenv("USER_EMAIL")
 	password := os.Getenv("USER_PASS")
-	code := os.Getenv("SRC")
 	if login == "" || password == "" { //Проверка, пустые ли данные
 		log.Fatal("Ошибка: переменные USER_EMAIL или USER_PASS не найдены в .env или пусты")
 	}
@@ -37,9 +36,9 @@ func main() {
 	id := path.Base(*first_url)
 	fmt.Printf("Текущий id урока: %s\n", id)
 	// 4. Собираем url видео которые нужно посмотреть
-	urls := parser.GetAvailableLessons(page, code)
+	urls := parser.GetAvailableLessons(page)
 	for _, url := range urls {
-		fmt.Printf("📖 Открываю: %s\n", url)
+		fmt.Printf("Открываю: %s\n", url)
 		page.MustNavigate(url)
 		page.MustWaitLoad()
 
