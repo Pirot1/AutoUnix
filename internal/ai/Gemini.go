@@ -1,70 +1,53 @@
 package ai
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
+	"google.golang.org/genai"
 )
 
-const GeminiURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
-
-type GeminiResponse struct {
-	Candidates []struct {
-		Content struct {
-			Parts []struct {
-				Text string `json:"text"`
-			} `json:"parts"`
-		} `json:"content"`
-	} `json:"candidates"`
-}
-
-func AskGemini(question string, options []string) (ans int) {
+func AskGemini(question string, options []string) int {
 	err := godotenv.Load("../../.env") //Загрузка .env
 	if err != nil {
-		log.Fatal("Ошибка при загрузке .env файла")
+		log.Fatal("Ошибка при загрузке .env файла\n")
 	}
 	GeminiAPI := os.Getenv("AI_KEY")
 	optionsList := ""
+
 	for i, opt := range options {
 		optionsList += fmt.Sprintf("%d. %s\n", i+1, opt)
 	}
 	prompt := fmt.Sprintf(
 		"Ты — помощник в обучении. Твоя задача: выбрать один правильный ответ из предложенного списка. "+
 			"Ответь ТОЛЬКО номером от 1 до 4 выбранного варианта, без объяснений, без знаков препинания в конце и без текста.\n\n"+
-			"Вопрос: %s\nВарианты:\n%v",
+			"Вопрос: %s\nВарианты:\n%v ",
 		question, optionsList,
 	)
-	requestBody, _ := json.Marshal(map[string]interface{}{
-		"contents": []interface{}{
-			map[string]interface{}{
-				"parts": []interface{}{
-					map[string]interface{}{"text": prompt},
-				},
-			},
-		},
-	})
-	resp, err := http.Post(GeminiURL+GeminiAPI, "application/json", bytes.NewBuffer(requestBody))
-	if err == nil {
-		fmt.Println("Ошибка запроса к Gemini:", err)
-		return 0
-	}
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-	var geminiResp GeminiResponse
-	json.Unmarshal(body, &geminiResp)
 
-	rawResponse := geminiResp.Candidates[0].Content.Parts[0].Text
-	var index int
-	_, err = fmt.Sscanf(rawResponse, "%d", &index)
+	ctx := context.Background()
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{
+		APIKey:  GeminiAPI,
+		Backend: genai.BackendGeminiAPI,
+	},
+	)
 	if err != nil {
-		fmt.Println("Ошибка: ИИ вернул не число:", rawResponse)
+		fmt.Printf("Ошибка создания клиента: %v\n", err)
 		return 0
 	}
-	return index
+	result, err := client.Models.GenerateContent(
+		ctx,
+		"gemini-3-flash-preview",
+		genai.Text(prompt),
+		nil,
+	)
+	if err != nil {
+		log.Printf("Ошибка при создании ответа: %v\n", err)
+	}
+	int_result, _ := strconv.Atoi(result.Text())
+	return int_result
 }
