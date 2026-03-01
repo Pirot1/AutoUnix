@@ -12,14 +12,15 @@ func SolvingQuiz(page *rod.Page) {
 	fmt.Println("Начинаю тест...")
 	for i := 0; i < 5; i++ {
 		fmt.Printf("Вопрос №%d\n", i+1)
-		question := page.MustElement("p.select-none.mb-5 span:nth-child(2)").MustText()
-		options := page.MustElements("div.flex.flex-row.cursor-pointer")
+		question := page.MustElementX("//span[@class=\"text-unix-text-black dark:text-[#AFB7CA] font-medium text-2xl\"]").MustText()
+		options := page.MustElementsX("//p[@class=\"ml-4\"]")
 		var quiz []string
-		for _, el := range options {
-			quiz = append(quiz, el.MustElement("p.ml-4").MustText())
-		}
 		fmt.Printf("%s\n", question)
-		fmt.Printf("%v\n", options)
+		for _, el := range options {
+			txt := el.MustText()
+			fmt.Println(txt)
+			quiz = append(quiz, txt)
+		}
 		answer := AskGemini(question, quiz)
 		fmt.Printf("ИИ выбрал: %d\n", answer)
 		num_ans := 1
