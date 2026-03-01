@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"time"
 
 	"github.com/joho/godotenv"
 
@@ -37,6 +36,10 @@ func main() {
 	fmt.Printf("Текущий id урока: %s\n", id)
 	// 4. Собираем url видео которые нужно посмотреть
 	urls := parser.GetAvailableLessons(page)
+	if len(urls) == 0 {
+		fmt.Println("Все уроки выполнены, завершаю сессию")
+		return
+	}
 	for _, url := range urls {
 		fmt.Printf("Открываю: %s\n", url)
 		page.MustNavigate(url)
@@ -44,5 +47,5 @@ func main() {
 
 		parser.Proceed_lesson(page)
 	}
-	time.Sleep(100 * time.Second)
+	fmt.Println("Все уроки выполнены, завершаю сессию")
 }
