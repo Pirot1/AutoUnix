@@ -41,7 +41,7 @@ func AskGemini(question string, options []string) int {
 	}
 	result, err := client.Models.GenerateContent(
 		ctx,
-		"gemini-3-flash-preview",
+		"gemma-3-12b-it",
 		genai.Text(prompt),
 		nil,
 	)
