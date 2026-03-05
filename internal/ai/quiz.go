@@ -22,16 +22,17 @@ func SolvingQuiz(page *rod.Page) {
 			fmt.Println(txt)
 			quiz = append(quiz, txt)
 		}
-		answer := AskGemini(question, quiz)
+		answer := AskGemini_Web(question, quiz[:]) //тут либо AskGemini_Web - без API или AskGemini - c API
 		fmt.Printf("ИИ выбрал: %d\n", answer)
 		if answer == 0 {
 			fmt.Printf("Ошибка, ИИ не смог найти ответ\n")
 			break
 		}
 		ans := fmt.Sprintf(`//div[@class="flex flex-col mt-5"]/div[%d]`, answer)
-		page.MustElementX(ans).MustClick()
+		page.MustActivate().MustElementX(ans).MustClick()
 		time.Sleep(500 * time.Millisecond)
-		page.MustElementX(`//button[@class="max-lg:px-[36px] max-sm:px-[40px] px-[72px]  py-[12px] gap-1 rounded-[24px] bg-[#0068FF] flex justify-center items-center"]`).MustClick()
+		page.MustActivate().MustElementX(`//div[@class="bg-[rounded-[24px] bg-white dark:bg-[#1A1A1A] py-[24px] px-[12px] mt-2 rounded-[24px]"]//button[2]`).MustClick()
+		time.Sleep(500 * time.Millisecond)
 	}
 	fmt.Println("Все вопросы пройдены. Завершаю тест...")
 }
