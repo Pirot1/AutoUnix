@@ -96,5 +96,6 @@ func HadlePostVideoActions(page *rod.Page) {
 		ai.SolvingQuiz(page)
 	} else {
 		fmt.Println("Теста нету")
+		time.Sleep(1 * time.Second)
 	}
 }
