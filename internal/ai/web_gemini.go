@@ -3,12 +3,15 @@ package ai
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"AutoUnix/internal/browser"
+
+	"github.com/go-rod/rod/lib/input"
 )
 
 func AskGemini_Web(question string, options []string) int {
-	b, page := browser.Init("https://gemini.google.com/app", false) // потом поставить false
+	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
 	defer b.MustClose()
 	fmt.Println("Успешно запустил Gemini")
 
@@ -23,8 +26,12 @@ func AskGemini_Web(question string, options []string) int {
 		question, optionsList,
 	)
 	page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
+	page.KeyActions().Press(input.Enter).MustDo()
 	fmt.Println("Ввёл вопрос. Жду ответ...")
-	result := page.MustWaitLoad().MustElement(`//p[@data-path-to-node="0"]`).MustText()
+	page.MustElementX(`//div[@class="container"]`).MustVisible()
+	time.Sleep(500 * time.Millisecond)
+	result := page.MustElementX(`//div[@class="container"]`).MustText()
+	time.Sleep(500 * time.Millisecond)
 	res, _ := strconv.Atoi(result)
 	return res
 }
