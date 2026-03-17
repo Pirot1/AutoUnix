@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/joho/godotenv"
 
@@ -23,14 +24,14 @@ func main() {
 		log.Fatal("Ошибка: переменные USER_EMAIL или USER_PASS не найдены в .env или пусты")
 	}
 	// 1. Запуск браузера
-	b, page := browser.Init(login, password)
+	b, page := browser.Init("https://uni-x.almv.kz/platform/login", false) // потом поставить false
 	defer b.MustClose()
 	// 2. Авторизация
 	parser.Autorisation(page, login, password)
 	// 3. Поиск урока
 	lessonName := os.Getenv("LESSON_NAME")
 	parser.FirstlLesson(page, lessonName)
-	//проверка доступен ли урок
+	// Проверка доступен ли урок
 	first_url := page.MustActivate().MustElementX("//a[@class=\"flex flex-row items-center cursor-pointer\"][1]").MustAttribute("href")
 	id := path.Base(*first_url)
 	fmt.Printf("Текущий id урока: %s\n", id)
@@ -38,8 +39,10 @@ func main() {
 	urls := parser.GetAvailableLessons(page)
 	if len(urls) == 0 {
 		fmt.Println("Все уроки выполнены, завершаю сессию")
+		time.Sleep(1 * time.Second)
 		return
 	}
+	// 5. Смотрим уроки и решаем тесты
 	for _, url := range urls {
 		fmt.Printf("Открываю: %s\n", url)
 		page.MustNavigate(url)
@@ -48,4 +51,5 @@ func main() {
 		parser.Proceed_lesson(page)
 	}
 	fmt.Println("Все уроки выполнены, завершаю сессию")
+	time.Sleep(1 * time.Second)
 }
