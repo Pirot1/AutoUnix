@@ -40,6 +40,9 @@ func Proceed_lesson(page *rod.Page) {
 func waitForVideoEnd(page *rod.Page) {
 	fmt.Println("Жду загрузки метаданных видео...")
 	page.MustElement("video").WaitStable(time.Second)
+	lessonTitle := page.MustElementX(`//span[@class="text-unix-text-black font-semibold dark:text-white"]`).MustText()
+	fmt.Println("Урок:", lessonTitle)
+	Caption_recorder(page, lessonTitle) // Запись субтитров
 	for {
 		result, err := page.Eval(`() => {
 			let v = document.getElementById('video');
