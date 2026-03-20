@@ -24,7 +24,7 @@ func main() {
 		log.Fatal("Ошибка: переменные USER_EMAIL или USER_PASS не найдены в .env или пусты")
 	}
 	// 1. Запуск браузера
-	b, page := browser.Init("https://uni-x.almv.kz/platform/login", false) // потом поставить false
+	b, page := browser.Init("https://uni-x.almv.kz/platform/login", true) // потом поставить false
 	defer b.MustClose()
 	// 2. Авторизация
 	parser.Autorisation(page, login, password)
