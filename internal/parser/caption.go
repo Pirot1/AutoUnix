@@ -29,20 +29,20 @@ func Clean_subs(subtitle string) string {
 }
 
 func Caption_recorder(page *rod.Page, lessonName string) {
-	re := regexp.MustCompile(`[<>:"/\|?*]`)
-	name := re.ReplaceAllString(lessonName, "")
-	folderPath := filepath.Join("..", "..", "lessons", strings.TrimSpace(name))
-	err := os.MkdirAll(folderPath, 0755)
-	if err != nil {
-		fmt.Println("Ошибка создания папки:", err)
-		return
-	}
-	filePath := filepath.Join(folderPath, "lesson_summary.txt")
 	el, err := page.Element("track[kind='captions']")
 	if err != nil {
 		fmt.Println("Субтитры не найдены на этой странице")
 		return
 	}
+	re := regexp.MustCompile(`[<>:"/\|?*]`)
+	name := re.ReplaceAllString(lessonName, "")
+	folderPath := filepath.Join("..", "..", "lessons", strings.TrimSpace(name))
+	err = os.MkdirAll(folderPath, 0755)
+	if err != nil {
+		fmt.Println("Ошибка создания папки:", err)
+		return
+	}
+	filePath := filepath.Join(folderPath, "lesson_summary.txt")
 	subtitleURL := el.MustAttribute("src")
 	if subtitleURL == nil || *subtitleURL == "" {
 		fmt.Println("У тега track нет ссылки src")
