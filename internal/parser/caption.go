@@ -29,9 +29,13 @@ func Clean_subs(subtitle string) string {
 }
 
 func Caption_recorder(page *rod.Page, lessonName string) {
-	el, err := page.Element("track[kind='captions']")
+	exists, el, err := page.Has("track[kind='captions']")
 	if err != nil {
-		fmt.Println("Субтитры не найдены на этой странице")
+		fmt.Printf("Ошибка при поиске: %v\n", err)
+		return
+	}
+	if !exists {
+		fmt.Println("Субтитров на этом уроке нет.")
 		return
 	}
 	re := regexp.MustCompile(`[<>:"/\|?*]`)
