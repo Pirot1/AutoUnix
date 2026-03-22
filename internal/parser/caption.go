@@ -12,8 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"rsc.io/pdf"
-
+	"github.com/dslipak/pdf"
 	"github.com/go-rod/rod"
 )
 
@@ -43,7 +42,12 @@ func Make_conspect(lessonName string, fullText string) {
 		return
 	}
 	filePath := filepath.Join(folderPath, "lesson_summary.txt")
-	os.WriteFile(filePath, []byte(fullText), 0644)
+	err = os.WriteFile(filePath, []byte(Clean_subs(fullText)), 0644)
+	if err != nil {
+		fmt.Printf("Ошибка при сохранении субтитров: %v\n", err)
+	} else {
+		fmt.Printf("Файл сохранен: %s\n", filePath)
+	}
 	// Ai-power caption
 	aiText := ai.Make_AI_conspect(fullText)
 	filePath = filepath.Join(folderPath, "lesson_AI_summary.txt")
@@ -54,33 +58,33 @@ func Make_conspect(lessonName string, fullText string) {
 		fmt.Printf("Файл сохранен: %s\n", filePath)
 	}
 }
-func DownloadAndProcessPDF(url string, lessonName string) {
+func ReadPDF(url string, lessonName string) {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Ошибка скачивания PDF:", err)
+		fmt.Printf("Не удалось скачать PDF: %v", err)
 		return
 	}
 	defer resp.Body.Close()
-	data, _ := io.ReadAll(resp.Body)
-	r, err := pdf.NewReader(bytes.NewReader(data), int64(len(data)))
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Ошибка чтения PDF структуры:", err)
+		fmt.Printf("Не удалось прочитать тело ответа: %v", err)
 		return
 	}
-	var fullText string
-	totalPage := r.NumPage()
-	for i := 1; i <= totalPage; i++ {
-		p := r.Page(i)
-		if p.V.IsNull() {
-			continue
-		}
-		content := p.Content()
-		for _, text := range content.Text {
-			fullText += text.S + " "
-		}
-		fullText += "\n\n"
+	r, err := pdf.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		fmt.Printf("Ошибка инициализации PDF ридера: %v", err)
+		return
 	}
-	Make_conspect(lessonName, fullText)
+	textReader, err := r.GetPlainText()
+	if err != nil {
+		return
+	}
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(textReader)
+	if err != nil {
+		return
+	}
+	Make_conspect(lessonName, buf.String())
 }
 func Check_materials(page *rod.Page, lessonName string) {
 	exists, el, err := page.Has("span[title='Materials']")
@@ -90,7 +94,6 @@ func Check_materials(page *rod.Page, lessonName string) {
 	}
 	if !exists {
 		fmt.Println("Материалов на этом уроке нет.")
-		Check_materials(page, lessonName)
 		return
 	}
 	el.MustClick()
@@ -98,7 +101,7 @@ func Check_materials(page *rod.Page, lessonName string) {
 	if err == nil {
 		pdfURL := pdfEl.MustAttribute("href")
 		fmt.Printf("Нашел PDF-конспект: %s\n", *pdfURL)
-		DownloadAndProcessPDF(*pdfURL, lessonName)
+		ReadPDF(*pdfURL, lessonName)
 		return
 	}
 }
