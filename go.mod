@@ -3,11 +3,11 @@ module AutoUnix
 go 1.25.6
 
 require (
+	github.com/dslipak/pdf v0.0.2
 	github.com/go-rod/rod v0.116.2
 	github.com/go-rod/stealth v0.4.9
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/genai v1.48.0
-	rsc.io/pdf v0.1.1
 )
 
 require (

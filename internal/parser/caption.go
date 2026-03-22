@@ -83,7 +83,7 @@ func DownloadAndProcessPDF(url string, lessonName string) {
 	Make_conspect(lessonName, fullText)
 }
 func Check_materials(page *rod.Page, lessonName string) {
-	exists, el, err := page.Has("track[kind='captions']")
+	exists, el, err := page.Has("span[title='Materials']")
 	if err != nil {
 		fmt.Printf("Ошибка при поиске: %v\n", err)
 		return
