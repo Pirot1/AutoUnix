@@ -17,8 +17,7 @@
 1. Склонируйте репозиторий: `git clone https://github.com/Pirot1/AutoUnix.git`.
 2. Установите зависимости: `go mod tidy`.
 3. Создайте файл `.env` и добавьте туда `AI_KEY` если работаете через API, пример файла — `.env.example`.
-4. Перейдите в папку проекта `cd .\cmd\bot\`
-5. Запустите: `go run .\main.go`.
+4. Запустите: `go run .\cmd\bot\main.go` или через готовый `autounix.exe` файл.
 
 ---
 

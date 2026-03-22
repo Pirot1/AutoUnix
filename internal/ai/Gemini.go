@@ -12,7 +12,7 @@ import (
 )
 
 func AskGemini(question string, options []string) int {
-	err := godotenv.Load("../../.env") //Загрузка .env
+	err := godotenv.Load(".env") //Загрузка .env
 	if err != nil {
 		log.Fatal("Ошибка при загрузке .env файла\n")
 	}
