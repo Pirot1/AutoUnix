@@ -37,7 +37,7 @@ func AskGemini_Web(question string, options []string) int {
 }
 
 func Make_AI_conspect(txt string) string {
-	b, page := browser.Init("https://gemini.google.com/app", false) // потом поставить false
+	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
 	defer b.MustClose()
 	fmt.Println("Успешно запустил Gemini")
 
