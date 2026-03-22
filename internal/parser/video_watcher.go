@@ -34,6 +34,13 @@ func Proceed_lesson(page *rod.Page) {
 			v.play().catch(e => console.log("Браузер заблокировал запуск:", e));
 		}
 	}`)
+	page.MustEval(`() => {
+		const video = document.querySelector('video');
+		if (video) {
+			video.muted = true;
+			video.volume = 0;
+		}
+	}`) // Выключить звук
 	waitForVideoEnd(page)
 }
 
