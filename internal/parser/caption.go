@@ -36,7 +36,7 @@ func Caption_recorder(page *rod.Page, lessonName string) {
 	}
 	re := regexp.MustCompile(`[<>:"/\|?*]`)
 	name := re.ReplaceAllString(lessonName, "")
-	folderPath := filepath.Join("..", "..", "lessons", strings.TrimSpace(name))
+	folderPath := filepath.Join("lessons", strings.TrimSpace(name))
 	err = os.MkdirAll(folderPath, 0755)
 	if err != nil {
 		fmt.Println("Ошибка создания папки:", err)
