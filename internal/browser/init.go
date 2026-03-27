@@ -1,7 +1,7 @@
 package browser
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
@@ -20,7 +20,7 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("disable-extensions")
 	url, err := l.Launch()
 	if err != nil {
-		panic(fmt.Sprintf("Не удалось запустить браузер: %v", err))
+		log.Panicf("Не удалось запустить браузер: %v", err)
 	}
 	browser := rod.New().ControlURL(url).MustConnect().NoDefaultDevice()
 	page := stealth.MustPage(browser)
@@ -29,6 +29,6 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
 	})
 	page = page.MustNavigate(site)
-	fmt.Println("Начинаем работу...")
+	log.Println("Начинаем работу...")
 	return browser, page
 }

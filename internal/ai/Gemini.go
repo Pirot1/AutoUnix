@@ -36,7 +36,7 @@ func AskGemini(question string, options []string) int {
 	},
 	)
 	if err != nil {
-		fmt.Printf("Ошибка создания клиента: %v\n", err)
+		log.Printf("Ошибка создания клиента: %v\n", err)
 		return 0
 	}
 	result, err := client.Models.GenerateContent(

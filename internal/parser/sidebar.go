@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/go-rod/rod"
 )
@@ -14,14 +14,14 @@ const (
 
 func GetAvailableLessons(page *rod.Page) []string {
 	chapters := page.MustActivate().MustElementsX("//div[@class=\"mt-5 rounded-[28px] bg-white dark:bg-[#1a1a1a] p-6 flex-0 overflow-y-auto\"]//div[@class=\"flex flex-row items-start cursor-pointer\"]")
-	fmt.Println("Открываю главы...")
+	log.Println("Открываю главы...")
 	if len(chapters) > 1 {
 		for _, chapter := range chapters[1:] {
 			chapter.MustClick()
 		}
 	}
 	lessons := page.MustActivate().MustElementsX("//a[@class = \"flex flex-row items-center cursor-pointer\"]")
-	fmt.Println("Ищу урок...")
+	log.Println("Ищу урок...")
 	var urls []string
 	for _, lesson := range lessons {
 		img, err := lesson.Element(".w-4.h-4")
@@ -40,7 +40,7 @@ func GetAvailableLessons(page *rod.Page) []string {
 		}
 	}
 	if len(urls) != 0 {
-		fmt.Println("Уроки найдены!")
+		log.Println("Уроки найдены!")
 	}
 	return urls
 }

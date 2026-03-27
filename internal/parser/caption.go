@@ -3,6 +3,7 @@ package parser
 import (
 	"AutoUnix/internal/ai"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -31,7 +32,7 @@ func Clean_subs(subtitle string) string {
 func Caption_recorder(page *rod.Page, lessonName string) {
 	el, err := page.Element("track[kind='captions']")
 	if err != nil {
-		fmt.Println("Субтитры не найдены на этой странице")
+		log.Println("Субтитры не найдены на этой странице")
 		return
 	}
 	re := regexp.MustCompile(`[<>:"/\|?*]`)
@@ -39,22 +40,20 @@ func Caption_recorder(page *rod.Page, lessonName string) {
 	folderPath := filepath.Join("lessons", strings.TrimSpace(name))
 	err = os.MkdirAll(folderPath, 0755)
 	if err != nil {
-		fmt.Println("Ошибка создания папки:", err)
-		return
+		log.Fatal("Ошибка создания папки:", err)
 	}
 	filePath := filepath.Join(folderPath, "lesson_summary.txt")
 	subtitleURL := el.MustAttribute("src")
 	if subtitleURL == nil || *subtitleURL == "" {
-		fmt.Println("У тега track нет ссылки src")
-		return
+		log.Fatal("У тега track нет ссылки src")
 	}
-	fmt.Println("Начал запись субтитров...")
+	log.Println("Начал запись субтитров...")
 	content := page.MustEval(`(url) => fetch(url).then(res => res.text())`, *subtitleURL).String()
 	err = os.WriteFile(filePath, []byte(Clean_subs(content)), 0644)
 	if err != nil {
-		fmt.Printf("Ошибка при сохранении субтитров: %v\n", err)
+		log.Fatalf("Ошибка при сохранении субтитров: %v\n", err)
 	} else {
-		fmt.Printf("Файл сохранен: %s\n", filePath)
+		log.Printf("Файл сохранен: %s\n", filePath)
 	}
 
 	// Ai-power caption
@@ -62,8 +61,8 @@ func Caption_recorder(page *rod.Page, lessonName string) {
 	filePath = filepath.Join(folderPath, "lesson_AI_summary.txt")
 	err = os.WriteFile(filePath, []byte(Clean_subs(aiText)), 0644)
 	if err != nil {
-		fmt.Printf("Ошибка при сохранении субтитров: %v\n", err)
+		log.Fatalf("Ошибка при сохранении субтитров: %v\n", err)
 	} else {
-		fmt.Printf("Файл сохранен: %s\n", filePath)
+		log.Printf("Файл сохранен: %s\n", filePath)
 	}
 }
