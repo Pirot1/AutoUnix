@@ -33,11 +33,11 @@ func SolvingQuiz(page *rod.Page) {
 		}
 		ans := fmt.Sprintf(`//div[@class="flex flex-col mt-5"]/div[%d]`, answer)
 		page.MustActivate().MustElementX(ans).MustClick()
+		time.Sleep(500 * time.Millisecond)
 	}
 	fmt.Println("Все вопросы пройдены. Завершаю тест...")
 	page.MustElementX(`//button[@class="flex items-center text-white text-[15px] font-bold whitespace-nowrap max-sm:whitespace-normal"]`).MustClick()
 	page.MustElementX(`//div[@class="flex-1 py-3 mr-1 border border-[#5F6B88] text-[#5F6B88] rounded-lg cursor-pointer text-[15px] font-bold text-center"]`).MustClick()
 	grade := page.MustElementX(`//div[@class="flex items-center max-sm:justify-center"]/p/span[1]`).MustText()
 	fmt.Printf("Оценка за тест: %s\n", grade)
-	time.Sleep(1 * time.Second)
 }
