@@ -50,7 +50,7 @@ func Make_AI_conspect(txt string) string {
 	log.Println("Ввёл вопрос. Жду ответ...")
 	page.MustElementX(`//div[@class="container"]`).MustVisible()
 	time.Sleep(500 * time.Millisecond)
-	result := page.MustElementX(`//div[@class="markdown markdown-main-panel enable-updated-hr-color"]`).MustText()
+	result := page.MustElementX(`//div[@class="markdown markdown-main-panel stronger enable-updated-hr-color" ]`).MustText()
 	time.Sleep(500 * time.Millisecond)
 	return result
 }
