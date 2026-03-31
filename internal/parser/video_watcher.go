@@ -66,7 +66,7 @@ func waitForVideoEnd(page *rod.Page) {
 		}`)
 
 		if err != nil {
-			log.Fatal("\nОшибка связи с плеером. Возможно, страница перезагрузилась.")
+			log.Println("\nОшибка связи с плеером. Возможно, страница перезагрузилась.")
 			break
 		}
 		ready := result.Value.Get("ready").Bool()
