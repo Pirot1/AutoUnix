@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"AutoUnix/internal/ai"
@@ -14,14 +15,14 @@ const (
 )
 
 func Proceed_lesson(page *rod.Page) {
-	fmt.Println("Инициализация плеера...")
+	log.Println("Инициализация плеера...")
 	page.MustElement(".plyr").MustWaitVisible()
 	btn, err := page.ElementX("//button[@class=\"bg-[#FFDD33] text-black font-bold rounded mt-3 px-2 py-1\"]")
 	if err == nil && btn.MustVisible() {
-		fmt.Println("Продолжаю смотреть урок")
+		log.Println("Продолжаю смотреть урок")
 		btn.MustClick()
 	} else {
-		fmt.Println("Начинаю смотреть урок")
+		log.Println("Начинаю смотреть урок")
 		btn = page.MustActivate().MustElementX("//button[@class=\"plyr__control plyr__control--overlaid\"]")
 		btn.MustClick()
 	}
@@ -45,10 +46,10 @@ func Proceed_lesson(page *rod.Page) {
 }
 
 func waitForVideoEnd(page *rod.Page) {
-	fmt.Println("Жду загрузки метаданных видео...")
+	log.Println("Жду загрузки метаданных видео...")
 	page.MustElement("video").WaitStable(time.Second)
 	lessonTitle := page.MustElementX(`//span[@class="text-unix-text-black font-semibold dark:text-white"]`).MustText()
-	fmt.Println("Урок:", lessonTitle)
+	log.Println("Урок:", lessonTitle)
 	Caption_recorder(page, lessonTitle) // Запись субтитров
 	for {
 		result, err := page.Eval(`() => {
@@ -65,7 +66,7 @@ func waitForVideoEnd(page *rod.Page) {
 		}`)
 
 		if err != nil {
-			fmt.Println("\nОшибка связи с плеером. Возможно, страница перезагрузилась.")
+			log.Println("\nОшибка связи с плеером. Возможно, страница перезагрузилась.")
 			break
 		}
 		ready := result.Value.Get("ready").Bool()
@@ -81,7 +82,7 @@ func waitForVideoEnd(page *rod.Page) {
 		fmt.Printf("\rВоспроизведение: %d сек. из %d сек. 			%.0f%%", current, total, (float32(current)/float32(total))*100)
 
 		if ended || (total > 0 && current >= total) {
-			fmt.Println("\nВидео успешно досмотрено!")
+			log.Println("\nВидео успешно досмотрено!")
 			HadlePostVideoActions(page)
 			break
 		}
@@ -91,7 +92,7 @@ func waitForVideoEnd(page *rod.Page) {
 }
 
 func HadlePostVideoActions(page *rod.Page) {
-	fmt.Println("Анализирую страницу после видео...")
+	log.Println("Анализирую страницу после видео...")
 	res, err := page.Eval(`() => {
     const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Go to test'));
     if (btn) {
@@ -102,10 +103,10 @@ func HadlePostVideoActions(page *rod.Page) {
 	}`)
 
 	if err == nil && res.Value.Bool() {
-		fmt.Println("Перехожу на тест")
+		log.Println("Перехожу на тест")
 		ai.SolvingQuiz(page)
 	} else {
-		fmt.Println("Теста нету")
+		log.Println("Теста нету")
 		time.Sleep(1 * time.Second)
 	}
 }
