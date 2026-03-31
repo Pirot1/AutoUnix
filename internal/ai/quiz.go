@@ -17,6 +17,7 @@ func SolvingQuiz(page *rod.Page) {
 		log.Printf("Вопрос №%d\n", i+1)
 		quest := fmt.Sprintf(`//div[@class="flex flex-row overflow-x-auto"]/div[%d]`, i+1)
 		page.MustElementX(quest).MustClick()
+		time.Sleep(500 * time.Millisecond)
 		question := page.MustElementX("//span[@class=\"text-unix-text-black dark:text-[#AFB7CA] font-medium text-2xl\"]").MustText()
 		options := page.MustElementsX("//p[@class=\"ml-4\"]")
 		var quiz []string
@@ -33,7 +34,8 @@ func SolvingQuiz(page *rod.Page) {
 			log.Printf("ИИ не смог выбрать ответ, поэтому ответ был выбран случайно: %d\n", answer)
 		}
 		ans := fmt.Sprintf(`//div[@class="flex flex-col mt-5"]/div[%d]`, answer)
-		page.MustActivate().MustElementX(ans).MustClick()
+		page.MustElementX(ans).MustClick()
+		log.Println("Успешно ответил!")
 		time.Sleep(500 * time.Millisecond)
 	}
 	log.Println("Все вопросы пройдены. Завершаю тест...")
