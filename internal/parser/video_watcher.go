@@ -31,7 +31,7 @@ func Proceed_lesson(page *rod.Page) {
 	page.MustEval(`() => {
 		let v = document.getElementById('video');
 		if (v && v.paused) {
-			v.muted = true; // Снимаем блокировку браузера
+			v.muted = true;
 			v.play().catch(e => console.log("Браузер заблокировал запуск:", e));
 		}
 	}`)
@@ -42,6 +42,20 @@ func Proceed_lesson(page *rod.Page) {
 			video.volume = 0;
 		}
 	}`) // Выключить звук
+	_, err = page.Eval(`() => {
+		const playerElement = document.querySelector('.plyr');
+		if (playerElement && playerElement.plyr) {
+			playerElement.plyr.quality = 360;
+		} else {
+			const allPlayers = document.querySelectorAll('[data-plyr="quality"]');
+			if (allPlayers.length > 0) {
+				const btn360 = Array.from(allPlayers).find(b => b.value === "360");
+				if (btn360) {
+					btn360.click();
+				}
+			}
+		}
+	}`) // Поменять качество
 	waitForVideoEnd(page)
 }
 
@@ -94,12 +108,12 @@ func waitForVideoEnd(page *rod.Page) {
 func HadlePostVideoActions(page *rod.Page) {
 	log.Println("Анализирую страницу после видео...")
 	res, err := page.Eval(`() => {
-    const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Go to test'));
-    if (btn) {
-        btn.click();
-        return true;
-    }
-    return false;
+		const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Go to test'));
+		if (btn) {
+			btn.click();
+			return true;
+		}
+		return false;
 	}`)
 
 	if err == nil && res.Value.Bool() {
