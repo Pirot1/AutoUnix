@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -11,13 +12,11 @@ import (
 
 func Autorisation(page *rod.Page, login string, password string) {
 	page.MustElement("input[type=\"email\"]").MustWaitVisible().MustInput(login)
-	fmt.Println("Login succses")
 	page.MustElement("input[type=\"password\"]").MustWaitVisible().MustInput(password)
-	fmt.Println("Password succses")
 	page.MustElement("button[type=\"submit\"]").MustClick()
 	// Ждем загрузки личного кабинета
 	page.MustWaitLoad()
-	fmt.Println("Успешный вход!")
+	log.Println("Успешный вход!")
 }
 
 func NewEnvFile() {
