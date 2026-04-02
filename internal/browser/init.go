@@ -18,6 +18,7 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("no-sandbox")
 	l.Set("disable-dev-shm-usage")
 	l.Set("disable-extensions")
+	l.Set("disable-software-rasterizer")
 	url, err := l.Launch()
 	if err != nil {
 		log.Panicf("Не удалось запустить браузер: %v", err)

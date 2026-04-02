@@ -28,10 +28,11 @@ func AskGemini_Web(test []string) []int {
 		page.KeyActions().Press(input.Enter).MustDo()
 		log.Println("Успешно ввёл запрос...")
 		deadline := time.Now().Add(60 * time.Second)
+		currentText := ""
 		for time.Now().Before(deadline) {
 			found, el, _ := page.Has(".markdown-main-panel")
 			if found {
-				currentText := el.MustProperty("innerText").String()
+				currentText = el.MustProperty("innerText").String()
 				currentText = strings.TrimSpace(currentText)
 				if len(currentText) == 1 {
 					log.Printf("Ответ: %s\n", currentText)
@@ -40,6 +41,9 @@ func AskGemini_Web(test []string) []int {
 				}
 			}
 			time.Sleep(1 * time.Second)
+		}
+		if currentText == "" {
+			result = append(result, "0")
 		}
 		page.Reload()
 	}
