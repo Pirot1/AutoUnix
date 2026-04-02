@@ -12,51 +12,50 @@ import (
 	"github.com/go-rod/rod/lib/input"
 )
 
-func AskGemini_Web(question string, options []string) int {
+func AskGemini_Web(test []string) []int {
 	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
 	defer b.MustClose()
 	log.Println("Успешно запустил Gemini")
-
-	optionsList := ""
-	for i, opt := range options {
-		optionsList += fmt.Sprintf("%d. %s\n", i+1, opt)
-	}
-	prompt := fmt.Sprintf(
-		"Ты — помощник в обучении. Твоя задача: выбрать один правильный ответ из предложенного списка. "+
-			"Ответь ТОЛЬКО номером от 1 до 4 выбранного варианта, без объяснений, без знаков препинания в конце и без текста.\n\n"+
-			"Вопрос: %s\nВарианты:\n%v ",
-		question, optionsList,
-	)
-	page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
-	page.KeyActions().Press(input.Enter).MustDo()
-	deadline := time.Now().Add(60 * time.Second)
-	var result string
-	for time.Now().Before(deadline) {
-		found, el, _ := page.Has(".markdown-main-panel")
-		if found {
-			currentText := el.MustProperty("innerText").String()
-			currentText = strings.TrimSpace(currentText)
-			if len(currentText) == 1 {
-				result = currentText
-			} else {
-				continue
+	var result []string
+	for i := 0; i < len(test); i++ {
+		prompt := fmt.Sprintf(
+			"Act as a quiz solver. Output ONLY the answer key for the following questions.\n"+
+				"Strictly NO text, NO explanations, NO markdown.\n\n"+
+				"%s",
+			test[i],
+		)
+		page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
+		page.KeyActions().Press(input.Enter).MustDo()
+		log.Println("Успешно ввёл запрос...")
+		deadline := time.Now().Add(60 * time.Second)
+		for time.Now().Before(deadline) {
+			found, el, _ := page.Has(".markdown-main-panel")
+			if found {
+				currentText := el.MustProperty("innerText").String()
+				currentText = strings.TrimSpace(currentText)
+				if len(currentText) == 1 {
+					log.Printf("Ответ: %s\n", currentText)
+					result = append(result, currentText)
+					break
+				}
 			}
-			busy, _ := el.Attribute("aria-busy")
-			if len(currentText) == 1 {
-				log.Println("Обнаружено зависание статуса, но текст готов. Забираю.")
-				result = currentText
-				res, _ := strconv.Atoi(result)
-				return res
-			}
-			if busy != nil && *busy == "false" {
-				result = currentText
-				res, _ := strconv.Atoi(result)
-				return res
-			}
+			time.Sleep(1 * time.Second)
 		}
-		time.Sleep(1 * time.Second)
+		page.Reload()
 	}
-	return 0
+	if len(result) == 0 {
+		return []int{0, 0, 0, 0, 0}
+	}
+	var total []int
+	for _, el := range result {
+		num, err := strconv.Atoi(el)
+		if err != nil {
+			log.Println("Unable to convert")
+			num = 0
+		}
+		total = append(total, num)
+	}
+	return total
 }
 
 func Make_AI_conspect(txt string) string {
