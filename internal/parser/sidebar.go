@@ -14,14 +14,14 @@ const (
 
 func GetAvailableLessons(page *rod.Page) []string {
 	chapters := page.MustActivate().MustElementsX("//div[@class=\"mt-5 rounded-[28px] bg-white dark:bg-[#1a1a1a] p-6 flex-0 overflow-y-auto\"]//div[@class=\"flex flex-row items-start cursor-pointer\"]")
-	log.Println("Открываю главы...")
+	log.Println("Open pages...")
 	if len(chapters) > 1 {
 		for _, chapter := range chapters[1:] {
 			chapter.MustClick()
 		}
 	}
 	lessons := page.MustActivate().MustElementsX("//a[@class = \"flex flex-row items-center cursor-pointer\"]")
-	log.Println("Ищу урок...")
+	log.Println("Searching lessons...")
 	var urls []string
 	for _, lesson := range lessons {
 		img, err := lesson.Element(".w-4.h-4")
@@ -33,14 +33,13 @@ func GetAvailableLessons(page *rod.Page) []string {
 			continue
 		}
 		if *src == code || *src == half_lesson {
-			//fmt.Println("Урок найден!")
 			urls = append(urls, "https://uni-x.almv.kz"+*lesson.MustAttribute("href"))
 		} else {
 			continue
 		}
 	}
 	if len(urls) != 0 {
-		log.Println("Уроки найдены!")
+		log.Println("Lessons are found!")
 	}
 	return urls
 }

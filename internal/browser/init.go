@@ -24,7 +24,7 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("disable-software-rasterizer")
 	url, err := l.Launch()
 	if err != nil {
-		log.Panicf("Не удалось запустить браузер: %v", err)
+		log.Panicf("Couldn't init browser: %v", err)
 	}
 	browser := rod.New().ControlURL(url).MustConnect().NoDefaultDevice()
 	page := stealth.MustPage(browser)
@@ -41,9 +41,9 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 		},
 	}.Call(page)
 	if err != nil {
-		log.Println("Ошибка настройки блокировки:", err)
+		log.Println("Error with block settings:", err)
 	}
 	page.MustNavigate(site)
-	log.Println("Начинаем работу...")
+	log.Println("Booting up...")
 	return browser, page
 }

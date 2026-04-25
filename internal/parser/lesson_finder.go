@@ -7,10 +7,10 @@ import (
 )
 
 func FirstlLesson(page *rod.Page, lessonName string) {
-	log.Println("Ищу урок на странице...")
+	log.Println("Searching for a lesson...")
 	page.MustElement("input[placeholder=\"Courses search\"]").MustWaitVisible().MustInput(lessonName)
 	page.MustElement("div[class=\"h-full flex\"]").MustWaitVisible().MustClick()
-	log.Println("Урок найден успешно!")
+	log.Println("Lessong was founded!")
 
 	page.MustActivate().MustElementX("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div[1]").MustClick()
 	first_url := page.MustActivate().MustElementX("//div[@class=\"overflow-y-auto bg-[#F0F3FA] dark:bg-black\"]/div[1]/div[1]/div[3]/a[1]").MustAttribute("href")

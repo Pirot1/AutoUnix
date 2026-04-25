@@ -13,9 +13,9 @@ import (
 )
 
 func AskGemini_Web(test []string) []int {
-	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
+	b, page := browser.Init("https://gemini.google.com/app", true)
 	defer b.MustClose()
-	log.Println("Успешно запустил Gemini")
+	log.Println("Successfully init Gemini")
 	var result []string
 	for i := 0; i < len(test); i++ {
 		prompt := fmt.Sprintf(
@@ -26,7 +26,7 @@ func AskGemini_Web(test []string) []int {
 		)
 		page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
 		page.KeyActions().Press(input.Enter).MustDo()
-		log.Println("Успешно ввёл запрос...")
+		log.Println("Successfully ask...")
 		deadline := time.Now().Add(60 * time.Second)
 		currentText := ""
 		for time.Now().Before(deadline) {
@@ -35,7 +35,7 @@ func AskGemini_Web(test []string) []int {
 				currentText = el.MustProperty("innerText").String()
 				currentText = strings.TrimSpace(currentText)
 				if len(currentText) == 1 {
-					log.Printf("Ответ: %s\n", currentText)
+					log.Printf("Answer: %s\n", currentText)
 					result = append(result, currentText)
 					break
 				}
@@ -63,16 +63,16 @@ func AskGemini_Web(test []string) []int {
 }
 
 func Make_AI_conspect(txt string) string {
-	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
+	b, page := browser.Init("https://gemini.google.com/app", true)
 	defer b.MustClose()
-	log.Println("Успешно запустил Gemini")
+	log.Println("Successfully init Gemini")
 
 	prompt := fmt.Sprintf(
-		"Ты — помощник в обучении. Твоя задача: написать конспект на английском языке изходя из \"сырого\" файла конспекта:\n%s", txt,
+		"You are — couch with education. Your goal: write conspect in english by using from \"raw\" file conspect:\n%s", txt,
 	)
 	page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
 	page.KeyActions().Press(input.Enter).MustDo()
-	log.Println("Ввёл вопрос. Жду ответ...")
+	log.Println("Ask question. waiting for an answer...")
 	deadline := time.Now().Add(60 * time.Second)
 	var result string
 	var lastText string
@@ -91,7 +91,7 @@ func Make_AI_conspect(txt string) string {
 			busy, _ := el.Attribute("aria-busy")
 			if (busy != nil && *busy == "false") || (sameCount >= 7 && len(currentText) > 50) {
 				if sameCount >= 7 {
-					log.Println("Обнаружено зависание статуса, но текст готов. Забираю.")
+					log.Println("Delay was founded. Take the raw answer.")
 				}
 				result = currentText
 				break
