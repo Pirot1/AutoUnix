@@ -20,7 +20,7 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("disable-extensions")
 	url, err := l.Launch()
 	if err != nil {
-		log.Panicf("Не удалось запустить браузер: %v", err)
+		log.Panicf("Couldn't init browser: %v", err)
 	}
 	browser := rod.New().ControlURL(url).MustConnect().NoDefaultDevice()
 	page := stealth.MustPage(browser)
@@ -29,6 +29,6 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
 	})
 	page = page.MustNavigate(site)
-	log.Println("Начинаем работу...")
+	log.Println("Booting up...")
 	return browser, page
 }

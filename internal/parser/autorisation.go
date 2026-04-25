@@ -17,28 +17,28 @@ func Autorisation(page *rod.Page, login string, password string) {
 	page.MustElement("button[type=\"submit\"]").MustClick()
 	// Ждем загрузки личного кабинета
 	page.MustWaitLoad()
-	fmt.Println("Успешный вход!")
+	fmt.Println("Successfully autorisate!")
 }
 
 func NewEnvFile() {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Введите логин: ")
+	fmt.Println("Input login: ")
 	login, _ := reader.ReadString('\n')
 	login = strings.TrimSpace(login)
 
-	fmt.Println("Введите пароль: ")
+	fmt.Println("Input password: ")
 	password, _ := reader.ReadString('\n')
 	password = strings.TrimSpace(password)
 
-	fmt.Println("Введите ваш курс: ")
+	fmt.Println("Input your course: ")
 	course, _ := reader.ReadString('\n')
 	course = strings.TrimSpace(course)
 
 	envData := fmt.Sprintf("USER_EMAIL=%s\nUSER_PASS=%s\nLESSON_NAME=%s", login, password, course)
 	err := os.WriteFile(".env", []byte(envData), 0644)
 	if err != nil {
-		fmt.Println("Ошибка записи")
+		fmt.Println("Writing error")
 	} else {
-		fmt.Println("Данные сохранены в .env!")
+		fmt.Println("Successfully create .env!")
 	}
 }

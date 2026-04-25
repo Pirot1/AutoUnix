@@ -15,14 +15,14 @@ const (
 )
 
 func Proceed_lesson(page *rod.Page) {
-	log.Println("Инициализация плеера...")
+	log.Println("Player initialisation...")
 	page.MustElement(".plyr").MustWaitVisible()
 	btn, err := page.ElementX("//button[@class=\"bg-[#FFDD33] text-black font-bold rounded mt-3 px-2 py-1\"]")
 	if err == nil && btn.MustVisible() {
-		log.Println("Продолжаю смотреть урок")
+		log.Println("Continue watching lesson")
 		btn.MustClick()
 	} else {
-		log.Println("Начинаю смотреть урок")
+		log.Println("Start wathcing lesson")
 		btn = page.MustActivate().MustElementX("//button[@class=\"plyr__control plyr__control--overlaid\"]")
 		btn.MustClick()
 	}
@@ -31,8 +31,8 @@ func Proceed_lesson(page *rod.Page) {
 	page.MustEval(`() => {
 		let v = document.getElementById('video');
 		if (v && v.paused) {
-			v.muted = true; // Снимаем блокировку браузера
-			v.play().catch(e => console.log("Браузер заблокировал запуск:", e));
+			v.muted = true;
+			v.play().catch(e => console.log("Browser blocked launch:", e));
 		}
 	}`)
 	page.MustEval(`() => {
@@ -41,16 +41,16 @@ func Proceed_lesson(page *rod.Page) {
 			video.muted = true;
 			video.volume = 0;
 		}
-	}`) // Выключить звук
+	}`)
 	waitForVideoEnd(page)
 }
 
 func waitForVideoEnd(page *rod.Page) {
-	log.Println("Жду загрузки метаданных видео...")
+	log.Println("Waiting for metadata...")
 	page.MustElement("video").WaitStable(time.Second)
 	lessonTitle := page.MustElementX(`//span[@class="text-unix-text-black font-semibold dark:text-white"]`).MustText()
 	log.Println("Урок:", lessonTitle)
-	Caption_recorder(page, lessonTitle) // Запись субтитров
+	Caption_recorder(page, lessonTitle)
 	for {
 		result, err := page.Eval(`() => {
 			let v = document.getElementById('video');
@@ -66,7 +66,7 @@ func waitForVideoEnd(page *rod.Page) {
 		}`)
 
 		if err != nil {
-			log.Println("\nОшибка связи с плеером. Возможно, страница перезагрузилась.")
+			log.Println("\nConnection error")
 			break
 		}
 		ready := result.Value.Get("ready").Bool()
@@ -79,10 +79,10 @@ func waitForVideoEnd(page *rod.Page) {
 		current := result.Value.Get("current").Int()
 		total := result.Value.Get("total").Int()
 
-		fmt.Printf("\rВоспроизведение: %d сек. из %d сек. 			%.0f%%", current, total, (float32(current)/float32(total))*100)
+		fmt.Printf("\rDuration: %d sec. out of %d sec. 			%.0f%%", current, total, (float32(current)/float32(total))*100)
 
 		if ended || (total > 0 && current >= total) {
-			log.Println("\nВидео успешно досмотрено!")
+			log.Println("\nSuccessfully complete lesson!")
 			HadlePostVideoActions(page)
 			break
 		}
@@ -92,7 +92,7 @@ func waitForVideoEnd(page *rod.Page) {
 }
 
 func HadlePostVideoActions(page *rod.Page) {
-	log.Println("Анализирую страницу после видео...")
+	log.Println("Analizing...")
 	res, err := page.Eval(`() => {
     const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Go to test'));
     if (btn) {
@@ -103,10 +103,10 @@ func HadlePostVideoActions(page *rod.Page) {
 	}`)
 
 	if err == nil && res.Value.Bool() {
-		log.Println("Перехожу на тест")
+		log.Println("Found test")
 		ai.SolvingQuiz(page)
 	} else {
-		log.Println("Теста нету")
+		log.Println("Test was not found")
 		time.Sleep(1 * time.Second)
 	}
 }
