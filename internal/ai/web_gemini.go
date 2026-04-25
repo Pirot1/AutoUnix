@@ -15,7 +15,7 @@ import (
 func AskGemini_Web(test []string) []int {
 	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
 	defer b.MustClose()
-	log.Println("Успешно запустил Gemini")
+	log.Println("Succsessfully init Gemini")
 	var result []string
 	for i := 0; i < len(test); i++ {
 		prompt := fmt.Sprintf(
@@ -26,7 +26,7 @@ func AskGemini_Web(test []string) []int {
 		)
 		page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
 		page.KeyActions().Press(input.Enter).MustDo()
-		log.Println("Успешно ввёл запрос...")
+		log.Println("Answer a question...")
 		deadline := time.Now().Add(60 * time.Second)
 		currentText := ""
 		for time.Now().Before(deadline) {
@@ -65,14 +65,14 @@ func AskGemini_Web(test []string) []int {
 func Make_AI_conspect(txt string) string {
 	b, page := browser.Init("https://gemini.google.com/app", true) // потом поставить false
 	defer b.MustClose()
-	log.Println("Успешно запустил Gemini")
+	log.Println("Succsessfully init Gemini")
 
 	prompt := fmt.Sprintf(
-		"Ты — помощник в обучении. Твоя задача: написать конспект на английском языке изходя из \"сырого\" файла конспекта:\n%s", txt,
+		"You are a learning assistant. Your task: write a summary in English based on the \"raw\" summary file:\n%s", txt,
 	)
 	page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
 	page.KeyActions().Press(input.Enter).MustDo()
-	log.Println("Ввёл вопрос. Жду ответ...")
+	log.Println("Answer a question")
 	deadline := time.Now().Add(60 * time.Second)
 	var result string
 	var lastText string
@@ -91,7 +91,7 @@ func Make_AI_conspect(txt string) string {
 			busy, _ := el.Attribute("aria-busy")
 			if (busy != nil && *busy == "false") || (sameCount >= 7 && len(currentText) > 50) {
 				if sameCount >= 7 {
-					log.Println("Обнаружено зависание статуса, но текст готов. Забираю.")
+					log.Println("Found a delay. Take the raw file")
 				}
 				result = currentText
 				break
