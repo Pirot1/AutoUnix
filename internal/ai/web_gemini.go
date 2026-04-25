@@ -65,14 +65,14 @@ func AskGemini_Web(test []string) []int {
 func Make_AI_conspect(txt string) string {
 	b, page := browser.Init("https://gemini.google.com/app", true)
 	defer b.MustClose()
-	log.Println("Successfully init Gemini")
+	log.Println("Succsessfully init Gemini")
 
 	prompt := fmt.Sprintf(
-		"You are — couch with education. Your goal: write conspect in english by using from \"raw\" file conspect:\n%s", txt,
+		"You are a learning assistant. Your task: write a summary in English based on the \"raw\" summary file:\n%s", txt,
 	)
 	page.MustElementX(`//div[@role="textbox"]`).MustInput(prompt)
 	page.KeyActions().Press(input.Enter).MustDo()
-	log.Println("Ask question. waiting for an answer...")
+	log.Println("Answer a question")
 	deadline := time.Now().Add(60 * time.Second)
 	var result string
 	var lastText string

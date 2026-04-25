@@ -22,7 +22,7 @@ func Proceed_lesson(page *rod.Page) {
 		log.Println("Continue watching lesson")
 		btn.MustClick()
 	} else {
-		log.Println("Start wathcing lesson")
+		log.Println("Start watching lesson")
 		btn = page.MustActivate().MustElementX("//button[@class=\"plyr__control plyr__control--overlaid\"]")
 		btn.MustClick()
 	}
@@ -32,7 +32,7 @@ func Proceed_lesson(page *rod.Page) {
 		let v = document.getElementById('video');
 		if (v && v.paused) {
 			v.muted = true;
-			v.play().catch(e => console.log("Browser blocked launch:", e));
+			v.play().catch(e => console.log("Browser block connection:", e));
 		}
 	}`)
 	page.MustEval(`() => {
@@ -60,7 +60,7 @@ func Proceed_lesson(page *rod.Page) {
 }
 
 func waitForVideoEnd(page *rod.Page) {
-	log.Println("Waiting for metadata...")
+	log.Println("Waiting for video's metadata...")
 	page.MustElement("video").WaitStable(time.Second)
 	lessonTitle := page.MustElementX(`//span[@class="text-unix-text-black font-semibold dark:text-white"]`).MustText()
 	log.Println("Урок:", lessonTitle)

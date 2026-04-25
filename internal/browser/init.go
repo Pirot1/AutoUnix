@@ -10,7 +10,7 @@ import (
 )
 
 func Init(site string, head bool) (*rod.Browser, *rod.Page) {
-	//Параметры инициализации
+	//Initialisatin parameters
 	chromePath := `C:\Program Files\Google\Chrome\Application\chrome.exe`
 	l := launcher.New().Bin(chromePath).Headless(head).Devtools(false).Leakless(false)
 	l.Set("autoplay-policy", "no-user-gesture-required")

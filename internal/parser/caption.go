@@ -33,6 +33,7 @@ func Clean_subs(subtitle string) string {
 	}
 	return strings.Join(cleanLines, "\n")
 }
+
 func Make_conspect(lessonName string, fullText string) {
 	re := regexp.MustCompile(`[<>:"/\|?*]`)
 	name := re.ReplaceAllString(lessonName, "")
@@ -47,7 +48,7 @@ func Make_conspect(lessonName string, fullText string) {
 	if err != nil {
 		log.Fatalf("Error while saving subtitles: %v\n", err)
 	} else {
-		log.Printf("Save file: %s\n", filePath)
+		log.Printf("File was saved: %s\n", filePath)
 	}
 	// Ai-power caption
 	aiText := ai.Make_AI_conspect(fullText)
@@ -56,7 +57,7 @@ func Make_conspect(lessonName string, fullText string) {
 	if err != nil {
 		log.Fatalf("Error while saving subtitles: %v\n", err)
 	} else {
-		log.Printf("Save file: %s\n", filePath)
+		log.Printf("File was saved: %s\n", filePath)
 	}
 }
 func ReadPDF(url string, lessonName string) {

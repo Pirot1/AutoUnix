@@ -14,7 +14,6 @@ func Autorisation(page *rod.Page, login string, password string) {
 	page.MustElement("input[type=\"email\"]").MustWaitVisible().MustInput(login)
 	page.MustElement("input[type=\"password\"]").MustWaitVisible().MustInput(password)
 	page.MustElement("button[type=\"submit\"]").MustClick()
-	// Ждем загрузки личного кабинета
 	page.MustWaitLoad()
 	fmt.Println("Successfully autorisate!")
 }

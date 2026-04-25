@@ -32,14 +32,14 @@ func GetAvailableLessons(page *rod.Page) []string {
 		if src == nil || *src == no_test {
 			continue
 		}
-		if *src == code || *src == half_lesson {
+		if *src == code || *src == half_lesson { 
 			urls = append(urls, "https://uni-x.almv.kz"+*lesson.MustAttribute("href"))
 		} else {
 			continue
 		}
 	}
 	if len(urls) != 0 {
-		log.Println("Lessons are found!")
+		log.Println("Lessons was found")
 	}
 	return urls
 }
