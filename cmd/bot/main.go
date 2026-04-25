@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -16,14 +15,14 @@ import (
 func main() {
 	file, err := os.OpenFile("bot.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666) // Запись log
 	if err != nil {
-		fmt.Println("Error with creating .log file:", err)
+		log.Println("Error with creating .log file:", err)
 		return
 	}
 	multi := io.MultiWriter(file, os.Stdout)
 	log.SetOutput(multi)
 	log.SetFlags(log.Ltime)
 
-	err = godotenv.Load(".env") //Загрузка .env
+	err = godotenv.Load(".env") //loading .env
 	if err != nil {
 		log.Print("Error while loading .env")
 		parser.NewEnvFile()
@@ -34,7 +33,7 @@ func main() {
 	login := os.Getenv("USER_EMAIL")
 	password := os.Getenv("USER_PASS")
 	lessonName := os.Getenv("LESSON_NAME")
-	if login == "" || password == "" || lessonName == "" { //Проверка, пустые ли данные
+	if login == "" || password == "" || lessonName == "" { //Cheking data
 		log.Print("Error: variable USER_EMAIL or USER_PASS are not founded in .env or they empty")
 		parser.NewEnvFile()
 		log.Println("Reload programm")
@@ -42,7 +41,7 @@ func main() {
 		return
 	}
 	// 1. Browser initialisation
-	b, page := browser.Init("https://uni-x.almv.kz/platform/login", true) // потом поставить false
+	b, page := browser.Init("https://uni-x.almv.kz/platform/login", true)
 	defer b.MustClose()
 	// 2. Autorisation
 	parser.Autorisation(page, login, password)
