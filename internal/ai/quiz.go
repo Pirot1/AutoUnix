@@ -17,18 +17,14 @@ func SolvingQuiz(page *rod.Page) {
 		log.Printf("Question №%d\n", i+1)
 		quest := fmt.Sprintf(`//div[@class="flex flex-row overflow-x-auto"]/div[%d]`, i+1)
 		page.MustElementX(quest).MustClick()
-		time.Sleep(500 * time.Millisecond)
 		question := page.MustElementX("//span[@class=\"text-unix-text-black dark:text-[#AFB7CA] font-medium text-2xl\"]").MustText()
 		options := page.MustElementsX("//p[@class=\"ml-4\"]")
-		var quiz []string
-		fmt.Printf("%s\n", question)
-		for _, el := range options {
-			txt := el.MustText()
-			fmt.Println(txt)
-			quiz = append(quiz, txt)
+		optionsList := ""
+		for i, opt := range options {
+			optionsList += fmt.Sprintf("%d. %s\n", i+1, opt.MustText())
 		}
 		answer := AskGemini_Web(question, quiz[:]) //use API if you want
-		log.Printf("ИИ выбрал: %d\n", answer)
+		log.Printf("Ai chose: %d\n", answer)
 		if answer == 0 {
 			answer = rand.Intn(3) + 1
 			log.Printf("AI couldn't find an answer, therefore the answer was chosen randomly: %d\n", answer)

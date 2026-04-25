@@ -18,6 +18,10 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("no-sandbox")
 	l.Set("disable-dev-shm-usage")
 	l.Set("disable-extensions")
+	l.Set("disable-dev-shm-usage")
+	l.Set("disable-setuid-sandbox")
+	l.Set("proxy-server", "direct://")
+	l.Set("disable-software-rasterizer")
 	url, err := l.Launch()
 	if err != nil {
 		log.Panicf("Couldn't init browser: %v", err)
@@ -28,7 +32,18 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	page.MustSetUserAgent(&proto.NetworkSetUserAgentOverride{
 		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
 	})
-	page = page.MustNavigate(site)
+	_ = proto.NetworkEnable{}.Call(page)
+	err = proto.NetworkSetBlockedURLs{
+		Urls: []string{
+			"*.png", "*.jpg", "*.jpeg", "*.gif", "*.svg",
+			"*.woff", "*.woff2", "*.ttf",
+			"*analytics*", "*metrika*", "*doubleclick*",
+		},
+	}.Call(page)
+	if err != nil {
+		log.Println("Error with block settings:", err)
+	}
+	page.MustNavigate(site)
 	log.Println("Booting up...")
 	return browser, page
 }

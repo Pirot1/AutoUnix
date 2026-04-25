@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -50,9 +49,7 @@ func main() {
 	// 3. Поиск урока
 	parser.FirstlLesson(page, lessonName)
 	// Проверка доступен ли урок
-	first_url := page.MustActivate().MustElementX("//a[@class=\"flex flex-row items-center cursor-pointer\"][1]").MustAttribute("href")
-	id := path.Base(*first_url)
-	log.Printf("Текущий id урока: %s\n", id)
+	page.MustActivate().MustElementX("//a[@class=\"flex flex-row items-center cursor-pointer\"][1]")
 	// 4. Собираем url видео которые нужно посмотреть
 	urls := parser.GetAvailableLessons(page)
 	if len(urls) == 0 {

@@ -1,29 +1,47 @@
 # AutoUnix (AU) 🚀
-Проект по автоматизации прохождения онлайн-курсов с использованием Go и ИИ.
+AutoUnix is an automation tool for online courses, powered by Go and Generative AI.
 
-## Технологический стек
-* **Язык:** Go (Golang) 1.21+
-* **Автоматизация браузера:** [Rod](https://go-rod.github.io/).
-* **Интеграция ИИ:** Gemini API.
-* **Парсинг:** Скрейпинг DOM-дерева через CSS-селекторы и Xpath.
+## Tech Stack
+* **Language:** [Go (Golang)](https://go.dev/) 1.21+
+* **Browser automatisation:** [Rod](https://go-rod.github.io/) (DevTools driver).
+* **AI integration:** Google Gemini API.
+* **Parsing:** DOM scraping via CSS and XPath selectors.
 
-## Структура проекта
-* `main.go` — точка входа и основная логика.
-* `internal/browser/` — инициализация и управление браузером.
-* `internal/ai/` — логика взаимодействия с нейросетью.
-* `internal/parser/` — парсинг вопросов и клики по ответа.
+## Project structure
+* `main.go` — The entry point and core application logic..
+* `internal/browser/` — Browser initialization and instance management.
+* `internal/ai/` — AI interaction(Gemini).
+* `internal/parser/` — Question parsing, site navigation, and interaction logic.
 
-## Как запустить
-1. Склонируйте репозиторий: `git clone https://github.com/Pirot1/AutoUnix.git`.
-2. Установите зависимости: `go mod tidy`.
-3. Создайте файл `.env` и добавьте туда `AI_KEY` если работаете через API, пример файла — `.env.example`.
-4. Запустите: `go run .\cmd\bot\main.go` или через готовый `autounix.exe` файл.
+## 🚀 Getting started
+### 1. Installation
+Clone the repository to your local machine:
+```bash
+git clone https://github.com/Pirot1/AutoUnix.git
+cd AutoUnix
+```
+### 2. Dependencies
+Install the required Go modules:
+```bash
+go mod tidy
+```
+### 3. Configuration
+The .env file will create automatically with first launch
+### 4. Running the Bot 
+Execute the source code:
+```bash
+go run ./cmd/bot/main.go
+```
+Or run the pre-compiled binary:
+```bash
+./autounix.exe
+```
 
 ---
 
-## 🏗 Архитектура проекта
+## 🏗 Project Architecture 
 
-Для удобства обучения мы разделяем код на логические блоки. В Go это принято делать через пакеты.
+The project follows a modular structure to ensure clean code separation and scalability:
 
 
 
@@ -31,26 +49,37 @@
 .
 ├── cmd/
 │   └── bot/
-│       └── main.go       # Точка входа (запуск программы)
+│       └── main.go           # Entry point (Application startup)
 ├── internal/
 │   ├── ai/
-│   │   ├── Gemini.go       # Генерация выбора ответа от 1 до 4 с помощью API
-│   │   ├── web_gemini.go   # Генерация выбора ответа от 1 до 4 на сайте gemini
-│   │   └── quiz.go         # Получение вопроса и выполнение теста
+│   │   ├── gemini.go         # API-based answer selection (multiple choice 1-4)
+│   │   ├── web_gemini.go     # Web-based interaction with Gemini 
+│   │   └── quiz.go           # Quiz processing and test execution
 │   ├── browser/
-│   │   └── init.go       # Инициализация браузера
-│   │   
+│   │   └── init.go           # Browser initialization (Headless mode, etc.)
 │   └── parser/
-│       ├── autorisation.go       # Авторизация на сайте
-│       ├── caption.go            # Запись субтитров урока, и делание конспекта
-│       ├── lesson_finde.go       # Нахождение необходимого урока
-│       ├── sidebar.go            # Проверка был ли сделан урок и перехож между ними
-│       └── video_watcher.go      # Проверяет что делать с видео и запускает его
+│       ├── authentication.go # Site login and session management
+│       ├── caption.go        # Capturing subtitles and generating summaries
+│       ├── lesson_finder.go  # Logic to locate specific course modules
+│       ├── sidebar.go        # Progress tracking and lesson navigation
+│       └── video_watcher.go  # Video playback control and monitoring
 ├── lessons/
-│   ├── Папки с конспектами/      # Тут хранятся конспекты
-├── .env                  # Секретные ключи
-├── env.example           # Пример записи .env файла
-├── go.sum                # Зависимости проекта
-├── go.mod                # Зависимости проекта
-├── .gitignore            # Игнорирование определённых файлов
-└── README.md             # Эта инструкция
+│   └── Lesson_name/            # Directory for stored study notes/summaries
+├── .env                      # Secret keys and credentials (Private)
+├── env.example               # Template for the .env file
+├── go.mod                    # Go module definition
+├── go.sum                    # Go module checksums
+├── .gitignore                # Files excluded from version control
+└── README.md                 # Project documentation (You are here)
+```
+## Key Features
+* **Smart Summaries**: Automatically extracts lesson subtitles and uses AI to generate concise, structured study notes.
+
+* **AI Quiz Solver**: Parses multiple-choice questions and consults Gemini to determine the most accurate answer.
+
+* **Headless Execution**: Runs silently in the background, allowing you to use your PC while the bot works.
+
+* **Intelligent Navigation**: Automatically detects completed lessons and navigates through the course sidebar.
+
+## Development Note
+`For cross-platform compatibility, it is recommended to keep directory names in English to avoid potential encoding issues during automated file operations.`
