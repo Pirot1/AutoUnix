@@ -15,7 +15,7 @@ func Autorisation(page *rod.Page, login string, password string) {
 	page.MustElement("input[type=\"password\"]").MustWaitVisible().MustInput(password)
 	page.MustElement("button[type=\"submit\"]").MustClick()
 	page.MustWaitLoad()
-	log.Println("Успешный вход!")
+	fmt.Println("Successfully autorisate!")
 }
 
 func NewEnvFile() {
@@ -35,8 +35,8 @@ func NewEnvFile() {
 	envData := fmt.Sprintf("USER_EMAIL=%s\nUSER_PASS=%s\nLESSON_NAME=%s", login, password, course)
 	err := os.WriteFile(".env", []byte(envData), 0644)
 	if err != nil {
-		fmt.Println("Saving error")
+		fmt.Println("Writing error")
 	} else {
-		fmt.Println("Your data was saved in .env")
+		fmt.Println("Successfully create .env!")
 	}
 }

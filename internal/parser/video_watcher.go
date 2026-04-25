@@ -93,10 +93,10 @@ func waitForVideoEnd(page *rod.Page) {
 		current := result.Value.Get("current").Int()
 		total := result.Value.Get("total").Int()
 
-		fmt.Printf("\rВоспроизведение: %d сек. из %d сек. 			%.0f%%", current, total, (float32(current)/float32(total))*100)
+		fmt.Printf("\rDuration: %d sec. out of %d sec. 			%.0f%%", current, total, (float32(current)/float32(total))*100)
 
 		if ended || (total > 0 && current >= total) {
-			log.Println("\nVideo has watched successfully!")
+			log.Println("\nSuccessfully complete lesson!")
 			HadlePostVideoActions(page)
 			break
 		}
@@ -106,7 +106,7 @@ func waitForVideoEnd(page *rod.Page) {
 }
 
 func HadlePostVideoActions(page *rod.Page) {
-	log.Println("Analysing aftervideo...")
+	log.Println("Analizing...")
 	res, err := page.Eval(`() => {
 		const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Go to test'));
 		if (btn) {
@@ -117,10 +117,10 @@ func HadlePostVideoActions(page *rod.Page) {
 	}`)
 
 	if err == nil && res.Value.Bool() {
-		log.Println("Go to the test")
+		log.Println("Found test")
 		ai.SolvingQuiz(page)
 	} else {
-		log.Println("No test")
+		log.Println("Test was not found")
 		time.Sleep(1 * time.Second)
 	}
 }

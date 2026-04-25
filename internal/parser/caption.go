@@ -63,7 +63,7 @@ func Make_conspect(lessonName string, fullText string) {
 func ReadPDF(url string, lessonName string) {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Printf("Couldn't init PDF: %v", err)
+		log.Printf("Couldn't download PDF: %v", err)
 		return
 	}
 	defer resp.Body.Close()
@@ -73,7 +73,7 @@ func ReadPDF(url string, lessonName string) {
 	}
 	r, err := pdf.NewReader(bytes.NewReader(data), int64(len(data)))
 	if err != nil {
-		log.Fatalf("Error while creating reader", err)
+		log.Fatalf("Initialisation error, reading PDF: %v", err)
 	}
 	textReader, err := r.GetPlainText()
 	if err != nil {
@@ -92,7 +92,7 @@ func Check_materials(page *rod.Page, lessonName string) {
 		log.Fatalf("Error while searching: %v\n", err)
 	}
 	if !exists {
-		log.Println("This lesson has no material.")
+		log.Println("This lesson does not have any materials.")
 		return
 	}
 	el.MustClick()
@@ -110,16 +110,16 @@ func Caption_recorder(page *rod.Page, lessonName string) {
 		log.Fatalf("Error while searching: %v\n", err)
 	}
 	if !exists {
-		log.Println("This video has no subtitles.")
+		log.Println("This lesson does not have subtitles.")
 		Check_materials(page, lessonName)
 		return
 	}
 	subtitleURL := el.MustAttribute("src")
 	if subtitleURL == nil || *subtitleURL == "" {
-		log.Println("Tag track has no attribute src")
+		log.Println("Tag trach does not have attribute src")
 		return
 	}
-	log.Println("Start recording subtitles...")
+	log.Println("Start loading subtietles...")
 	content := page.MustEval(`(url) => fetch(url).then(res => res.text())`, *subtitleURL).String()
 	Make_conspect(lessonName, content)
 }

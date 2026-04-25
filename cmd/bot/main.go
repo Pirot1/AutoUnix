@@ -24,9 +24,9 @@ func main() {
 
 	err = godotenv.Load(".env") //loading .env
 	if err != nil {
-		log.Print("Error while loading .env")
+		log.Print("Error while loading .env file")
 		parser.NewEnvFile()
-		log.Println("Reload programm")
+		log.Println("Reloading program...")
 		time.Sleep(3 * time.Second)
 		return
 	}
@@ -52,7 +52,7 @@ func main() {
 	// 4. Collecting video URLs
 	urls := parser.GetAvailableLessons(page)
 	if len(urls) == 0 {
-		log.Println("All lessons are done. Finishing up.")
+		log.Println("All lessons are done, finishing up...")
 		time.Sleep(1 * time.Second)
 		return
 	}
@@ -64,6 +64,6 @@ func main() {
 
 		parser.Proceed_lesson(page)
 	}
-	log.Println("All lessons are done. Finishing up.")
+	log.Println("All lessons are done, finishing up...")
 	time.Sleep(1 * time.Second)
 }

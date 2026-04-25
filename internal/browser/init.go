@@ -24,7 +24,7 @@ func Init(site string, head bool) (*rod.Browser, *rod.Page) {
 	l.Set("disable-software-rasterizer")
 	url, err := l.Launch()
 	if err != nil {
-		log.Panicf("Could not init browser: %v", err)
+		log.Panicf("Couldn't init browser: %v", err)
 	}
 	browser := rod.New().ControlURL(url).MustConnect().NoDefaultDevice()
 	page := stealth.MustPage(browser)

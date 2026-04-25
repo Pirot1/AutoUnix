@@ -14,7 +14,7 @@ import (
 func AskGemini(question string, options []string) int {
 	err := godotenv.Load(".env") //Loading .env
 	if err != nil {
-		log.Fatal("Ошибка при загрузке .env файла\n")
+		log.Fatal("Error while loading .env file\n")
 	}
 	GeminiAPI := os.Getenv("AI_KEY")
 	optionsList := ""
@@ -36,7 +36,7 @@ func AskGemini(question string, options []string) int {
 	},
 	)
 	if err != nil {
-		log.Printf("Ошибка создания клиента: %v\n", err)
+		log.Printf("Error with creating client: %v\n", err)
 		return 0
 	}
 	result, err := client.Models.GenerateContent(
@@ -46,7 +46,7 @@ func AskGemini(question string, options []string) int {
 		nil,
 	)
 	if err != nil {
-		log.Printf("Ошибка при создании ответа: %v\n", err)
+		log.Printf("Error while generating answer: %v\n", err)
 	}
 	int_result, _ := strconv.Atoi(result.Text())
 	return int_result
